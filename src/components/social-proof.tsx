@@ -11,23 +11,29 @@ const partners = [
 
 export default function SocialProof() {
   return (
-    <section className="py-16 bg-gray-100">
+    <section className="py-16 bg-gradient-to-b from-blue-50 to-blue-100">
       <div className="container mx-auto px-6">
-        <h2 className="text-2xl font-bold text-center mb-8 text-gray-800">Trusted by Industry Leaders</h2>
-        <div className="flex flex-wrap justify-center items-center gap-8">
+        {/* Header */}
+        <h2 className="text-4xl font-bold text-center mb-12 text-gray-800">
+          Trusted by <span className="text-blue-600">Industry Leaders</span>
+        </h2>
+
+        {/* Logos Grid */}
+        <div className="flex flex-wrap justify-center items-center gap-12">
           {partners.map((partner, index) => (
-            <motion.div 
+            <motion.div
               key={index}
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="p-4 bg-white rounded-lg shadow-lg hover:shadow-xl transform transition-transform hover:scale-105"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.15 }}
             >
-              <Image 
-                src={partner.logo} 
-                alt={partner.name} 
-                width={120} 
-                height={60} 
-                className="opacity-50 hover:opacity-100 transition-opacity"
+              <Image
+                src={partner.logo}
+                alt={partner.name}
+                width={140}
+                height={70}
+                className="opacity-70 hover:opacity-100 transition-opacity"
               />
             </motion.div>
           ))}
@@ -36,4 +42,3 @@ export default function SocialProof() {
     </section>
   )
 }
-

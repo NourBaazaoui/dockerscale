@@ -1,4 +1,6 @@
 "use client";
+
+import React from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
@@ -21,34 +23,40 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section id="testimonials" className="py-20 px-6 bg-white">
+    <section
+      id="testimonials"
+      className="py-20 px-6 bg-gradient-to-b from-blue-50 to-white"
+    >
       <div className="container mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">
+        <h2 className="text-4xl font-bold text-center mb-12 text-blue-800">
           What Our Clients Say
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}
-              className="bg-gray-50 p-6 rounded-lg shadow-md"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="bg-white p-8 rounded-lg shadow-lg border border-gray-200 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: index * 0.2 }}
             >
-              <p className="text-gray-600 mb-4">&quot;{testimonial.quote}&quot;</p>
+              <p className="text-lg italic text-gray-700 mb-6 leading-relaxed">
+                &quot;{testimonial.quote}&quot;
+              </p>
               <div className="flex items-center">
                 <Image
                   src={testimonial.avatar}
                   alt={testimonial.author}
-                  width={48}
-                  height={48}
-                  className="rounded-full mr-4"
+                  width={60}
+                  height={60}
+                  className="rounded-full shadow-md mr-4"
                 />
                 <div>
-                  <p className="font-semibold">{testimonial.author}</p>
-                  <p className="text-sm text-gray-500">
-                    {testimonial.position}
+                  <p className="text-lg font-bold text-gray-800">
+                    {testimonial.author}
                   </p>
+                  <p className="text-sm text-gray-500">{testimonial.position}</p>
                 </div>
               </div>
             </motion.div>
