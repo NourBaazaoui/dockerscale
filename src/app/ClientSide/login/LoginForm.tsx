@@ -24,11 +24,13 @@ export default function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [isResetting, setIsResetting] = useState(false);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-
+ 
     const formData = new FormData(e.currentTarget);
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
@@ -66,6 +68,39 @@ export default function LoginForm() {
   const handleGitHubSignIn = () => {
     signIn("github", { callbackUrl: "/profile" });
   };
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsResetting(true);
+
+    try {
+      const response = await fetch('/api/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: resetEmail }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "If an account exists with this email, you will receive password reset instructions.",
+        });
+        setShowForgotPassword(false);
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send reset password email",
+        variant: "destructive",
+      });
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
 
   return (
     <Card className="w-[350px]">
@@ -96,6 +131,13 @@ export default function LoginForm() {
               placeholder="Enter your password"
               required
             />
+            <Button
+              variant="link"
+              className="px-0 text-sm text-muted-foreground"
+              onClick={() => setShowForgotPassword(true)}
+            >
+              Forgot password?
+            </Button>
           </div>
           <div className="flex items-center space-x-2 mt-4">
             <Checkbox id="remember" />
