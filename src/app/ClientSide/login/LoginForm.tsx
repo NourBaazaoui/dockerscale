@@ -1,10 +1,12 @@
 "use client";
 
+
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { GithubIcon, Loader2 } from "lucide-react";
+
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 
+
 export default function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
@@ -27,13 +30,17 @@ export default function LoginForm() {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [isResetting, setIsResetting] = useState(false);
+
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
- 
+
+
     const formData = new FormData(e.currentTarget);
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
+
 
     try {
       const result = await signIn("credentials", {
@@ -42,6 +49,7 @@ export default function LoginForm() {
         redirect: false,
         callbackUrl: "/profile",
       });
+
 
       if (result?.error) {
         toast({
@@ -65,12 +73,16 @@ export default function LoginForm() {
     }
   };
 
+
   const handleGitHubSignIn = () => {
     signIn("github", { callbackUrl: "/profile" });
   };
+
+
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsResetting(true);
+
 
     try {
       const response = await fetch('/api/reset-password', {
@@ -79,7 +91,9 @@ export default function LoginForm() {
         body: JSON.stringify({ email: resetEmail }),
       });
 
+
       const data = await response.json();
+
 
       if (response.ok) {
         toast({
@@ -87,13 +101,15 @@ export default function LoginForm() {
           description: "If an account exists with this email, you will receive password reset instructions.",
         });
         setShowForgotPassword(false);
+        setResetEmail("");
       } else {
-        throw new Error(data.error);
+        throw new Error(data.error || 'Failed to send reset email');
       }
     } catch (error) {
+      console.error('Reset password error:', error);
       toast({
         title: "Error",
-        description: "Failed to send reset password email",
+        description: error instanceof Error ? error.message : "Failed to send reset password email",
         variant: "destructive",
       });
     } finally {
@@ -179,6 +195,51 @@ export default function LoginForm() {
           </Link>
         </p>
       </CardFooter>
+
+
+      {showForgotPassword && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+          <Card className="w-[350px]">
+            <CardHeader>
+              <CardTitle>Reset Password</CardTitle>
+              <CardDescription>
+                Enter your email address and we&apos;ll send you a link to reset your password.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleResetPassword}>
+                <div className="grid gap-2">
+                  <Label htmlFor="reset-email">Email</Label>
+                  <Input
+                    id="reset-email"
+                    type="email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
+                <div className="flex gap-2 mt-4">
+                  <Button type="submit" disabled={isResetting}>
+                    {isResetting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Send Reset Link
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowForgotPassword(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </Card>
   );
 }
+
+
+
